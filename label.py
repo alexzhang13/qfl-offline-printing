@@ -8,7 +8,7 @@ class Label:
     '''
     def __init__(self, 
                  year=2023,
-                 csv_path = 'qfl_data.csv',
+                 csv_path = 'data.csv',
                  save_folder = 'labels/'):
         self.data = pd.read_csv(csv_path)
         self.save_folder = save_folder
@@ -30,9 +30,10 @@ class Label:
           
     def clear (self):
         '''
-        Clear the labels folder
+        Clear the labels folder. Make sure there are no subfolders!
         '''
-        pass
+        for f in os.listdir(self.save_folder):
+          os.remove(os.path.join(self.save_folder, f))
     
     def getFontFamily(self):
         defaultFont = "PingFang SC"
@@ -46,6 +47,9 @@ class Label:
         '''
         For a specified reg_id, generate all relevant labels.
         '''
+        
+        self.clear()
+        
         df = self.data.loc[self.data["Registration: Reg No"] == reg_id]
         registrants = self.df_to_list(df)
         
