@@ -9,7 +9,7 @@ Offline data comes from a specified file named `data.csv`. The column names are 
 ```
 python main.py
 ```
-a GUI will pop up. For each group of registrants, type in their registration ID and click generate, and it will generate all of the necessary labels in the labels/ folder. Then, use the Dymo Connect software to print all of the labels. It will generate 3 types of labels, the individual labels as QID.label, the key labels as keyLabels_*.label (up to 4 people per key), and the t-shirt labels as tshirtLabels_*.label. 
+a GUI will pop up. For each group of registrants, type in their registration ID and click generate, and it will generate all of the necessary labels in the labels/ folder. Then, use the Dymo Connect software to print all of the labels. It will generate 3 types of labels, the individual labels as `'QID'.label`, the key labels as `keyLabels_*.label` (up to 4 people per key), and the t-shirt labels as `tshirtLabels_*.label`. 
 
 An example of the generator is shown below:
 
