@@ -1,5 +1,5 @@
-# QFL Offline Printing Code
-Generating print labels for Dymo printers and a simple GUI to go with it.
+# QFL Offline Label Generator for Dymo Printers
+Generating print labels (xml format) for Dymo printers and a simple GUI to go with it.
 
 ## Setup
 I'm running this code on `python=3.9`. The necessary libraries are `PySimpleGUI` for the GUI interface and `pandas` for processing the data.
@@ -13,4 +13,4 @@ a GUI will pop up. For each group of registrants, type in their registration ID 
 
 An example of the generator is shown below:
 
-![alt text](https://github.com/alexzhang13/qfl-offline-printing/main/demo.png?raw=true)
+![alt text](https://github.com/alexzhang13/qfl-offline-printing/blob/main/demo.png?raw=true)
