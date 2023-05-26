@@ -2,39 +2,38 @@ import platform
 import pandas as pd
 import os
 
+
 class Label:
-    '''
+    """
     Class for holding labels and printing
-    '''
-    def __init__(self, 
-                 year=2023,
-                 csv_path = 'data.csv',
-                 save_folder = 'labels/'):
+    """
+
+    def __init__(self, year=2023, csv_path="qfldata.csv", save_folder="labels/"):
         self.data = pd.read_csv(csv_path)
         self.save_folder = save_folder
         self.year = year
-        
+
         if not os.path.exists(save_folder):
             os.makedirs(save_folder)
-    
+
     def df_to_list(self, df):
         participants = []
-        
+
         for index, row in df.iterrows():
             participant = {}
             for key in df.keys():
                 participant[key] = row.loc[key]
             participants.append(participant)
-                
+
         return participants
-          
-    def clear (self):
-        '''
+
+    def clear(self):
+        """
         Clear the labels folder. Make sure there are no subfolders!
-        '''
+        """
         for f in os.listdir(self.save_folder):
-          os.remove(os.path.join(self.save_folder, f))
-    
+            os.remove(os.path.join(self.save_folder, f))
+
     def getFontFamily(self):
         defaultFont = "PingFang SC"
 
@@ -44,18 +43,18 @@ class Label:
         return defaultFont
 
     def generate(self, reg_id):
-        '''
+        """
         For a specified reg_id, generate all relevant labels.
-        '''
-        
+        """
+
         self.clear()
-        
+
         df = self.data.loc[self.data["Registration: Reg No"] == reg_id]
         registrants = self.df_to_list(df)
-        
+
         for registrant in registrants:
             self.genBadgeLabel(
-                path=registrant["QFL No"] + '.label',
+                path=registrant["QFL No  ↑"] + ".label",
                 year=self.year,
                 name=registrant["Name"],
                 church=registrant["Church: Church Name"],
@@ -67,27 +66,35 @@ class Label:
                 registrantId=registrant["Registrant: QFL No"],
                 registrationId=registrant["Registration: Reg No"],
             )
-        
+
         PER_CARD = 4
         for i in range(len(registrants) // PER_CARD):
-            print('Card', i)
-            self.genKeyExchangeLabel(self.year, registrants[PER_CARD*i:PER_CARD*i+PER_CARD], card_idx=i)
-            self.genTshirtLabel(self.year, registrants[PER_CARD*i:PER_CARD*i+PER_CARD], card_idx=i)
+            print("Card", i)
+            self.genKeyExchangeLabel(
+                self.year,
+                registrants[PER_CARD * i : PER_CARD * i + PER_CARD],
+                card_idx=i,
+            )
+            self.genTshirtLabel(
+                self.year,
+                registrants[PER_CARD * i : PER_CARD * i + PER_CARD],
+                card_idx=i,
+            )
 
+    def genTshirtLabel(self, year, registrants, card_idx):
+        fontFamilyCN = self.getFontFamily()
+        rowHeight = 460
 
-    def genTshirtLabel (self, year, registrants, card_idx):
-        fontFamilyCN = self.getFontFamily();
-        rowHeight = 460;
-
-        def tShirtMap (registrant, idx):
-            id = int(registrant["QFL No"][2:])
+        def tShirtMap(registrant, idx):
+            id = int(registrant["QFL No  ↑"][2:])
             name = registrant["Name"]
-            roomName = registrant["Room: Room"] if registrant["Room: Room"] != "" else "N/A"
+            roomName = (
+                registrant["Room: Room"] if registrant["Room: Room"] != "" else "N/A"
+            )
             tShirtSize = registrant["T Shirt Size"]
             y = 1450 + rowHeight * idx
 
-            return (
-                f"""<ObjectInfo>
+            return f"""<ObjectInfo>
                 <TextObject>
                 <Name>TEXT_7</Name>
                 <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
@@ -207,13 +214,13 @@ class Label:
                 </ShapeObject>
                 <Bounds X="4600" Y="{y}" Width="1200" Height="280"/>
             </ObjectInfo>
-            """)
+            """
 
         registrantLabels = []
         for idx, registrant in enumerate(registrants):
             registrantLabels.append(tShirtMap(registrant, idx))
-            
-        labels = '\n'.join(registrantLabels)
+
+        labels = "\n".join(registrantLabels)
         tshirtLabels = f"""<?xml version="1.0" encoding="utf-8"?>
 <DieCutLabel Version="8.0" Units="twips" MediaType="Default">
   <PaperOrientation>Landscape</PaperOrientation>
@@ -435,22 +442,27 @@ class Label:
   {labels}
 </DieCutLabel>"""
 
-        with open(os.path.join(self.save_folder, f'tshirtLabels_{card_idx}.label'), "w") as w:
-           w.write(tshirtLabels)
-    
+        with open(
+            os.path.join(self.save_folder, f"tshirtLabels_{card_idx}.label"), "w"
+        ) as w:
+            w.write(tshirtLabels)
+
     def genKeyExchangeLabel(self, year, registrants, card_idx):
-        '''
-        Generate new key exchange label and write to .label 
-        '''
+        """
+        Generate new key exchange label and write to .label
+        """
+
         def registrantMap(registrant, idx):
-            print(registrant["QFL No"])
-            id = int(registrant["QFL No"][2:])
+            print(registrant["QFL No  ↑"])
+            id = int(registrant["QFL No  ↑"][2:])
             name = registrant["Name"]
-            roomName = registrant["Room: Room"] if registrant["Room: Room"] != "" else "N/A"
+            roomName = (
+                registrant["Room: Room"] if registrant["Room: Room"] != "" else "N/A"
+            )
             hasKey = registrant["Borrow Key"] == True
             hasCard = registrant["Borrow Meal Card"] == True
             y = 1450 + rowHeight * idx
-            
+
             print(id, name, roomName, hasKey, hasCard, y)
 
             return (
@@ -557,8 +569,9 @@ class Label:
           </StyledText>
         </TextObject>
         <Bounds X="3250" Y="{y}" Width="100" Height="280"/>
-      </ObjectInfo>""" + \
-      ( f"""'''<ObjectInfo>
+      </ObjectInfo>"""
+                + (
+                    f"""'''<ObjectInfo>
         <ShapeObject>
           <Name>Key Sig</Name>
           <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
@@ -573,8 +586,12 @@ class Label:
           <FillColor Alpha="0" Red="0" Green="0" Blue="0"/>
         </ShapeObject>
         <Bounds X="3450" Y="{y}" Width="1000" Height="280"/>
-      </ObjectInfo>'''""" if hasKey else "" ) + \
-      (f"""
+      </ObjectInfo>'''"""
+                    if hasKey
+                    else ""
+                )
+                + (
+                    f"""
       <ObjectInfo>
         <TextObject>
           <Name>TEXT_6</Name>
@@ -600,8 +617,10 @@ class Label:
           </StyledText>
         </TextObject>
         <Bounds X="4600" Y="{y}" Width="100" Height="280"/>
-      </ObjectInfo> """)
-                + (f"""
+      </ObjectInfo> """
+                )
+                + (
+                    f"""
       <ObjectInfo>
         <ShapeObject>
           <Name>Card Sig</Name>
@@ -618,8 +637,9 @@ class Label:
         </ShapeObject>
         <Bounds X="4800" Y="{y}" Width="1000" Height="280"/>
       </ObjectInfo>"""
-                if hasCard
-                else "" )
+                    if hasCard
+                    else ""
+                )
             )
 
         fontFamilyCN = self.getFontFamily()
@@ -630,9 +650,9 @@ class Label:
         registrantLabels = []
         for idx, registrant in enumerate(registrants):
             registrantLabels.append(registrantMap(registrant, idx))
-            
-        labels = '\n'.join(registrantLabels)
-        print('# of people', len(registrantLabels))
+
+        labels = "\n".join(registrantLabels)
+        print("# of people", len(registrantLabels))
 
         keyLabels = f"""<?xml version="1.0" encoding="utf-8"?>
     <DieCutLabel Version="8.0" Units="twips" MediaType="Default">
@@ -854,8 +874,10 @@ class Label:
       </ObjectInfo>
       {labels}
     </DieCutLabel>"""
-        with open(os.path.join(self.save_folder, f'keyLabels_{card_idx}.label'), "w") as w:
-           w.write(keyLabels)
+        with open(
+            os.path.join(self.save_folder, f"keyLabels_{card_idx}.label"), "w"
+        ) as w:
+            w.write(keyLabels)
 
     def genBadgeLabel(
         self,
@@ -1096,9 +1118,9 @@ class Label:
 
 def main():
     YEAR = 2023
-    
+
     label = Label()
-    
+
     # label.genBadgeLabel(
     #     path="test.label",
     #     year=YEAR,
@@ -1112,7 +1134,7 @@ def main():
     #     registrantId="Q-0775",
     #     registrationId="R23-0485",
     # )
-    
+
     REGNO = "R23-0467"
     label.generate(REGNO)
 
