@@ -54,7 +54,7 @@ class Label:
 
         for registrant in registrants:
             self.genBadgeLabel(
-                path=registrant["QFL No  ↑"] + ".label",
+                path=registrant["QFL No"] + ".label",
                 year=self.year,
                 name=registrant["Name"],
                 church=registrant["Church: Church Name"],
@@ -68,7 +68,7 @@ class Label:
             )
 
         PER_CARD = 4
-        for i in range(len(registrants) // PER_CARD):
+        for i in range((len(registrants) // PER_CARD) + 1):
             print("Card", i)
             self.genKeyExchangeLabel(
                 self.year,
@@ -86,7 +86,7 @@ class Label:
         rowHeight = 460
 
         def tShirtMap(registrant, idx):
-            id = int(registrant["QFL No  ↑"][2:])
+            id = int(registrant["QFL No"][2:])
             name = registrant["Name"]
             roomName = (
                 registrant["Room: Room"] if registrant["Room: Room"] != "" else "N/A"
@@ -443,7 +443,9 @@ class Label:
 </DieCutLabel>"""
 
         with open(
-            os.path.join(self.save_folder, f"tshirtLabels_{card_idx}.label"), "w"
+            os.path.join(self.save_folder, f"tshirtLabels_{card_idx}.label"),
+            "w",
+            encoding="utf-8",
         ) as w:
             w.write(tshirtLabels)
 
@@ -453,8 +455,8 @@ class Label:
         """
 
         def registrantMap(registrant, idx):
-            print(registrant["QFL No  ↑"])
-            id = int(registrant["QFL No  ↑"][2:])
+            print(registrant["QFL No"])
+            id = int(registrant["QFL No"][2:])
             name = registrant["Name"]
             roomName = (
                 registrant["Room: Room"] if registrant["Room: Room"] != "" else "N/A"
@@ -875,7 +877,9 @@ class Label:
       {labels}
     </DieCutLabel>"""
         with open(
-            os.path.join(self.save_folder, f"keyLabels_{card_idx}.label"), "w"
+            os.path.join(self.save_folder, f"keyLabels_{card_idx}.label"),
+            "w",
+            encoding="utf-8",
         ) as w:
             w.write(keyLabels)
 
@@ -1112,7 +1116,7 @@ class Label:
       </ObjectInfo>
     </DieCutLabel>
         """
-        with open(os.path.join(self.save_folder, path), "w") as w:
+        with open(os.path.join(self.save_folder, path), "w", encoding="utf-8") as w:
             w.write(badge)
 
 
